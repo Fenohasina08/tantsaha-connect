@@ -1,16 +1,26 @@
-import React from 'react';
- 
+ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import HomePage from './pages/HomePage';
+import WeatherPage from './pages/WeatherPage';
+import AlertsPage from './pages/AlertsPage';
+import JournalPage from './pages/JournalPage';
+import AdvicePage from './pages/AdvicePage';
 
 function App() {
   return (
-    <div className="min-h-screen p-8 bg-green-100">
-      <h1 className="mb-4 text-4xl font-bold text-green-800 text-blue-500" >
-        ✅ Tantsaha Connect
-      </h1>
-      <p className="text-lg">
-        Si ce texte est vert et avec un fond vert clair, Tailwind fonctionne !
-      </p>
-    </div>
+    <Router>
+      <div className="min-h-screen bg-gray-50">
+        {/* Header/Navigation viendra ici */}
+        <main className="p-4">
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/weather" element={<WeatherPage />} />
+            <Route path="/alerts" element={<AlertsPage />} />
+            <Route path="/journal" element={<JournalPage />} />
+            <Route path="/advice" element={<AdvicePage />} />
+          </Routes>
+        </main>
+      </div>
+    </Router>
   );
 }
 
