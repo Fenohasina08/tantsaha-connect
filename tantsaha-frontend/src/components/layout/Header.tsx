@@ -7,19 +7,24 @@ import {
   FaVolumeUp,
   FaWifi,
   FaVolumeMute,
-  FaVolumeUp as FaVolumeUpIcon
+  FaCloud,
+  FaSeedling
 } from 'react-icons/fa';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 
 export default function Header() {
   const location = useLocation();
   const [isOnline, setIsOnline] = useState(navigator.onLine);
-  const [hasNewAlerts, setHasNewAlerts] = useState(true); // À connecter à ton store plus tard
+  const [hasNewAlerts, setHasNewAlerts] = useState(true);
   const [isMuted, setIsMuted] = useState(false);
+  const [lastOnlineTime, setLastOnlineTime] = useState<Date | null>(null);
 
-  // Détection du statut hors ligne/online
+  // Gestion réseau améliorée
   useEffect(() => {
-    const handleOnline = () => setIsOnline(true);
+    const handleOnline = () => {
+      setIsOnline(true);
+      setLastOnlineTime(new Date());
+    };
     const handleOffline = () => setIsOnline(false);
 
     window.addEventListener('online', handleOnline);
@@ -31,107 +36,201 @@ export default function Header() {
     };
   }, []);
 
-  // Items de navigation avec icônes seulement
-  const navItems = [
-    { to: '/', icon: <FaHome />, label: 'Trano' },
-    { to: '/weather', icon: <FaCloudSun />, label: 'Toetrandro' },
-    { to: '/alerts', icon: <FaBell />, label: 'Fampandrenesana' },
-    { to: '/journal', icon: <FaBook />, label: 'Boky' },
-    { to: '/advice', icon: <FaVolumeUp />, label: 'Torolalana' },
-  ];
+  // Navigation mémoïsée pour la performance
+  const navItems = useMemo(() => [
+    { 
+      to: '/', 
+      icon: <FaHome className="text-xl" />, 
+      label: 'Trano',
+      description: 'Pejy fandraisana'
+    },
+    { 
+      to: '/weather', 
+      icon: <FaCloudSun className="text-xl" />, 
+      label: 'Toetrandro',
+      description: 'Toetrandro ankehitriny sy vinavinaina'
+    },
+    { 
+      to: '/alerts', 
+      icon: <FaBell className="text-xl" />, 
+      label: 'Fampandrenesana',
+      description: 'Fampandrenesana momba ny toetrandro'
+    },
+    { 
+      to: '/journal', 
+      icon: <FaBook className="text-xl" />, 
+      label: 'Boky',
+      description: 'Boky fitehirizana ny asa fambolena'
+    },
+    { 
+      to: '/advice', 
+      icon: <FaSeedling className="text-xl" />, 
+      label: 'Torolalana',
+      description: 'Torolalana momba ny fambolena'
+    },
+  ], []);
 
-  // Toggle pour couper le son des conseils audio
-  const toggleMute = () => {
-    setIsMuted(!isMuted);
-    // Ici, tu pourras connecter cette fonction à ton player audio
-    console.log('Audio muted:', !isMuted);
-  };
+  // Fonction optimisée avec useCallback
+  const toggleMute = useCallback(() => {
+    setIsMuted(prev => {
+      const newState = !prev;
+      console.log('Audio muted:', newState);
+      return newState;
+    });
+  }, []);
+
+  // Déterminer l'élément actif
+  const activeIndex = useMemo(() => {
+    return navItems.findIndex(item => location.pathname === item.to);
+  }, [location.pathname, navItems]);
 
   return (
-    <header className="p-4 text-white bg-green-600 shadow-lg">
-      {/* Ligne supérieure : Statut + Titre + Contrôle Audio */}
+    <header className="sticky top-0 z-50 p-4 text-white shadow-xl bg-gradient-to-r from-green-700 to-emerald-700 backdrop-blur-sm bg-opacity-95">
+      {/* En-tête supérieur */}
       <div className="flex items-center justify-between mb-4">
-        {/* Indicateur de connexion */}
-        <div className="flex items-center">
-          {isOnline ? (
-            <FaWifi className="mr-2 text-green-300" title="Azo ampiasaina amin'ny Internet" />
-          ) : (
-            <FaWifi className="mr-2 text-gray-400 opacity-75" title="Hors ligne - Fonctionne localement" />
-          )}
-          <span className="text-xs">
-            {isOnline ? 'Azo ampiasaina' : 'Tsy misy Internet'}
-          </span>
+        {/* Indicateur de connexion amélioré */}
+        <div className="flex items-center gap-2">
+          <div className={`p-2 rounded-full ${isOnline ? 'bg-emerald-500' : 'bg-amber-600'} transition-all`}>
+            {isOnline ? (
+              <FaWifi 
+                className="text-white" 
+                title="Misy Internet - Mandeha amin'ny angona vaovao" 
+              />
+            ) : (
+              <FaCloud 
+                className="text-white" 
+                title="Tsy misy Internet - Mandeha amin'ny angona efa nangonina" 
+              />
+            )}
+          </div>
+          <div className="flex flex-col">
+            <span className={`text-xs font-medium ${isOnline ? 'text-emerald-200' : 'text-amber-200'}`}>
+              {isOnline ? 'Misy Internet' : 'Tsy misy Internet'}
+            </span>
+            {!isOnline && lastOnlineTime && (
+              <span className="text-[10px] text-gray-300">
+                Nangonina tamin'ny {lastOnlineTime.toLocaleTimeString('mg-MG')}
+              </span>
+            )}
+          </div>
         </div>
 
-        {/* Titre de l'application en malgache */}
-        <h1 className="text-xl font-bold ">
-          🌾 Tantsaha Mifandray
-        </h1>
+        {/* Titre de l'application avec animation subtile */}
+        <div className="text-center">
+          <h1 className="text-xl font-bold tracking-wide animate-pulse-slow">
+            <span className="inline-block mr-2 animate-bounce-slow">🌾</span>
+            Tantsaha <span className="text-emerald-300">Mifandray</span>
+          </h1>
+          <p className="text-xs text-emerald-200 mt-0.5">Torolalana ho an'ny tantsaha</p>
+        </div>
 
-        {/* Bouton mute/unmute pour l'audio */}
-        
+        {/* Contrôle audio avec état clair */}
+        <div className="flex items-center">
+          <button 
+            onClick={toggleMute}
+            className={`
+              p-2 rounded-full transition-all duration-300 
+              ${isMuted 
+                ? 'bg-gray-600 hover:bg-gray-500' 
+                : 'bg-emerald-500 hover:bg-emerald-400'
+              }
+              focus:outline-none focus:ring-2 focus:ring-emerald-300 focus:ring-offset-2 focus:ring-offset-green-700
+            `}
+            aria-label={isMuted ? "Mampandeha ny feo" : "Ahena ny feo"}
+            title={isMuted ? "Mampandeha ny feo" : "Ahena ny feo"}
+          >
+            {isMuted ? (
+              <FaVolumeMute className="text-lg" />
+            ) : (
+              <FaVolumeUp className="text-lg" />
+            )}
+          </button>
+          {isMuted && (
+            <div className="px-2 py-1 ml-2 text-xs bg-gray-700 rounded-full">
+              Feo tsy mandeha
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* Navigation avec icônes seulement (en bas sur mobile) */}
-      <nav className="relative flex justify-around">
-        {navItems.map((item) => {
-          const isActive = location.pathname === item.to;
-          const isAlertItem = item.to === '/alerts';
-          
-          return (
-            <div key={item.to} className="relative">
-              <Link 
-                to={item.to}
-                className={`
-                  flex flex-col items-center p-3 rounded-xl transition-all
-                  relative group
-                  ${isActive 
-                    ? 'bg-green-700 transform scale-105' 
-                    : 'hover:bg-green-700 hover:scale-105'
-                  }
-                `}
-                aria-label={item.label}
-                title={item.label}
-              >
-                {/* Carré bleu pour l'élément actif */}
-                {isActive && (
-                  <div className="absolute inset-0 border-2 border-blue-400 rounded-xl animate-pulse"></div>
-                )}
+      {/* Navigation principale avec indicateur animé */}
+      <nav className="relative">
+        <div className="flex justify-around">
+          {navItems.map((item, index) => {
+            const isActive = location.pathname === item.to;
+            const isAlertItem = item.to === '/alerts';
+            
+            return (
+              <div key={item.to} className="relative">
+                <Link 
+                  to={item.to}
+                  className={`
+                    flex flex-col items-center p-3 rounded-xl transition-all duration-300
+                    relative group
+                    ${isActive 
+                      ? 'bg-white/10 transform scale-110 shadow-lg' 
+                      : 'hover:bg-white/5 hover:scale-105'
+                    }
+                    focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-green-700
+                  `}
+                  aria-label={item.label}
+                  aria-current={isActive ? "page" : undefined}
+                >
+                  {/* Icône principale avec effet de brillance */}
+                  <div className="relative">
+                    <span className={`
+                      relative z-10 transition-colors duration-300
+                      ${isActive ? 'text-white' : 'text-emerald-200 group-hover:text-white'}
+                    `}>
+                      {item.icon}
+                    </span>
+                    
+                    {/* Effet de halo pour l'élément actif */}
+                    {isActive && (
+                      <div className="absolute inset-0 rounded-full bg-white/20 animate-ping-slow"></div>
+                    )}
+                  </div>
 
-                {/* Icône principale */}
-                <span className="relative z-10 text-2xl">
-                  {item.icon}
-                </span>
+                  {/* Badge notifications animé */}
+                  {isAlertItem && hasNewAlerts && (
+                    <>
+                      <div className="absolute w-2 h-2 bg-red-400 rounded-full -top-1 -right-1 animate-ping"></div>
+                      <div className="absolute w-3 h-3 bg-red-500 rounded-full -top-1 -right-1"></div>
+                      <div className="absolute -top-2 -right-2 px-1.5 py-0.5 bg-red-600 rounded-full text-[10px] font-bold animate-pulse">
+                        !
+                      </div>
+                    </>
+                  )}
 
-                {/* Badge pour nouvelles alertes */}
-                {isAlertItem && hasNewAlerts && (
-                  <div className="absolute w-4 h-4 bg-red-500 border-2 border-white rounded-full -top-1 -right-1 animate-bounce"></div>
-                )}
+                  {/* Effet de surbrillance au survol */}
+                  <div className="absolute inset-0 transition-opacity duration-300 opacity-0 bg-gradient-to-b from-white/10 to-transparent rounded-xl group-hover:opacity-100"></div>
+                </Link>
 
-                {/* Surlignage au survol */}
-                <div className="absolute inset-0 transition-opacity bg-blue-400 opacity-0 group-hover:opacity-20 rounded-xl"></div>
-              </Link>
-
-              {/* Label en petit texte (optionnel, apparaît au survol) */}
-              <div className="absolute px-2 py-1 mb-2 text-xs text-white transition-opacity transform -translate-x-1/2 bg-gray-800 rounded opacity-0 pointer-events-none bottom-full left-1/2 group-hover:opacity-100 whitespace-nowrap">
-                {item.label}
+                {/* Tooltip amélioré */}
+                <div className="absolute px-3 py-2 mb-2 text-sm text-white transition-all duration-200 transform -translate-x-1/2 rounded-lg shadow-xl opacity-0 pointer-events-none bg-gray-900/95 backdrop-blur-sm bottom-full left-1/2 group-hover:opacity-100 group-hover:-translate-y-1 whitespace-nowrap">
+                  <div className="font-medium">{item.label}</div>
+                  <div className="mt-1 text-xs text-gray-300">{item.description}</div>
+                  <div className="absolute w-2 h-2 transform rotate-45 -translate-x-1/2 bg-gray-900/95 -bottom-1 left-1/2"></div>
+                </div>
               </div>
-            </div>
-          );
-        })}
-      </nav>
+            );
+          })}
+        </div>
 
-      {/* Indicateur visuel pour l'élément actif */}
-      {navItems.map((item) => {
-        if (location.pathname === item.to) {
-          return (
-            <div key={`indicator-${item.to}`} className="mt-2 text-center">
-              <div className="inline-block w-12 h-1 bg-blue-400 rounded-full"></div>
-            </div>
-          );
-        }
-        return null;
-      })}
+        {/* Indicateur d'élément actif animé (sous la navigation) */}
+        {activeIndex >= 0 && (
+          <div 
+            className="absolute bottom-0 h-1 transition-all duration-500 ease-out bg-white rounded-full"
+            style={{
+              width: `${100 / navItems.length}%`,
+              left: `${(activeIndex * 100) / navItems.length}%`,
+              transform: 'translateY(8px)'
+            }}
+          >
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent animate-shimmer"></div>
+          </div>
+        )}
+      </nav>
     </header>
   );
 }
