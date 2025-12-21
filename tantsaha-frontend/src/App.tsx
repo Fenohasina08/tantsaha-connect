@@ -4,13 +4,16 @@ import WeatherPage from './pages/WeatherPage';
 import AlertsPage from './pages/AlertsPage';
 import JournalPage from './pages/JournalPage';
 import AdvicePage from './pages/AdvicePage';
+import Header from './components/layout/Header';
 
 function App() {
   return (
     <Router>
+      {/* Version simple sans Header fixe */}
+      <Header />
+      
       <div className="min-h-screen bg-gray-50">
-        {/* Header/Navigation viendra ici */}
-        <main className="p-4">
+        <main className="p-4 md:p-6">
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/weather" element={<WeatherPage />} />

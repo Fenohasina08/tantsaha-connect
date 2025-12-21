@@ -1,0 +1,137 @@
+ import { Link, useLocation } from 'react-router-dom';
+import { 
+  FaHome, 
+  FaCloudSun, 
+  FaBell, 
+  FaBook, 
+  FaVolumeUp,
+  FaWifi,
+  FaVolumeMute,
+  FaVolumeUp as FaVolumeUpIcon
+} from 'react-icons/fa';
+import { useState, useEffect } from 'react';
+
+export default function Header() {
+  const location = useLocation();
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
+  const [hasNewAlerts, setHasNewAlerts] = useState(true); // À connecter à ton store plus tard
+  const [isMuted, setIsMuted] = useState(false);
+
+  // Détection du statut hors ligne/online
+  useEffect(() => {
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
+
+  // Items de navigation avec icônes seulement
+  const navItems = [
+    { to: '/', icon: <FaHome />, label: 'Trano' },
+    { to: '/weather', icon: <FaCloudSun />, label: 'Toetrandro' },
+    { to: '/alerts', icon: <FaBell />, label: 'Fampandrenesana' },
+    { to: '/journal', icon: <FaBook />, label: 'Boky' },
+    { to: '/advice', icon: <FaVolumeUp />, label: 'Torolalana' },
+  ];
+
+  // Toggle pour couper le son des conseils audio
+  const toggleMute = () => {
+    setIsMuted(!isMuted);
+    // Ici, tu pourras connecter cette fonction à ton player audio
+    console.log('Audio muted:', !isMuted);
+  };
+
+  return (
+    <header className="p-4 text-white bg-green-600 shadow-lg">
+      {/* Ligne supérieure : Statut + Titre + Contrôle Audio */}
+      <div className="flex items-center justify-between mb-4">
+        {/* Indicateur de connexion */}
+        <div className="flex items-center">
+          {isOnline ? (
+            <FaWifi className="mr-2 text-green-300" title="Azo ampiasaina amin'ny Internet" />
+          ) : (
+            <FaWifi className="mr-2 text-gray-400 opacity-75" title="Hors ligne - Fonctionne localement" />
+          )}
+          <span className="text-xs">
+            {isOnline ? 'Azo ampiasaina' : 'Tsy misy Internet'}
+          </span>
+        </div>
+
+        {/* Titre de l'application en malgache */}
+        <h1 className="text-xl font-bold ">
+          🌾 Tantsaha Mifandray
+        </h1>
+
+        {/* Bouton mute/unmute pour l'audio */}
+        
+      </div>
+
+      {/* Navigation avec icônes seulement (en bas sur mobile) */}
+      <nav className="relative flex justify-around">
+        {navItems.map((item) => {
+          const isActive = location.pathname === item.to;
+          const isAlertItem = item.to === '/alerts';
+          
+          return (
+            <div key={item.to} className="relative">
+              <Link 
+                to={item.to}
+                className={`
+                  flex flex-col items-center p-3 rounded-xl transition-all
+                  relative group
+                  ${isActive 
+                    ? 'bg-green-700 transform scale-105' 
+                    : 'hover:bg-green-700 hover:scale-105'
+                  }
+                `}
+                aria-label={item.label}
+                title={item.label}
+              >
+                {/* Carré bleu pour l'élément actif */}
+                {isActive && (
+                  <div className="absolute inset-0 border-2 border-blue-400 rounded-xl animate-pulse"></div>
+                )}
+
+                {/* Icône principale */}
+                <span className="relative z-10 text-2xl">
+                  {item.icon}
+                </span>
+
+                {/* Badge pour nouvelles alertes */}
+                {isAlertItem && hasNewAlerts && (
+                  <div className="absolute w-4 h-4 bg-red-500 border-2 border-white rounded-full -top-1 -right-1 animate-bounce"></div>
+                )}
+
+                {/* Surlignage au survol */}
+                <div className="absolute inset-0 transition-opacity bg-blue-400 opacity-0 group-hover:opacity-20 rounded-xl"></div>
+              </Link>
+
+              {/* Label en petit texte (optionnel, apparaît au survol) */}
+              <div className="absolute px-2 py-1 mb-2 text-xs text-white transition-opacity transform -translate-x-1/2 bg-gray-800 rounded opacity-0 pointer-events-none bottom-full left-1/2 group-hover:opacity-100 whitespace-nowrap">
+                {item.label}
+              </div>
+            </div>
+          );
+        })}
+      </nav>
+
+      {/* Indicateur visuel pour l'élément actif */}
+      {navItems.map((item) => {
+        if (location.pathname === item.to) {
+          return (
+            <div key={`indicator-${item.to}`} className="mt-2 text-center">
+              <div className="inline-block w-12 h-1 bg-blue-400 rounded-full"></div>
+            </div>
+          );
+        }
+        return null;
+      })}
+    </header>
+  );
+}
