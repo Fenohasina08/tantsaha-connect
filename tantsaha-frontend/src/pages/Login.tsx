@@ -138,26 +138,9 @@ const Login = () => {
             />
           </div>
 
-          <div className="mt-6">
-            <label className="block mb-1 text-sm text-gray-600">
-              Password
-            </label>
-            <input
-              type="password"
-              placeholder="••••••••"
-              className="w-full py-2 text-gray-700 bg-transparent border-b border-gray-300 outline-none focus:border-teal-500"
-            />
-          </div>
+          
 
-          <div className="flex items-center mt-6">
-            <input
-              type="checkbox"
-              className="w-4 h-4 text-teal-500 border-gray-300 rounded"
-            />
-            <span className="ml-2 text-sm text-gray-600">
-              Remember me
-            </span>
-          </div>
+        
 
           <button
             onClick={handleLogin}
@@ -165,12 +148,6 @@ const Login = () => {
           >
             LOG IN
           </button>
-
-          <div className="mt-6 text-sm text-center text-gray-600">
-            <a href="#" className="hover:text-teal-500">
-              Forgot your password?
-            </a>
-          </div>
 
           <div className="mt-3 text-sm text-center text-gray-600">
             Don’t have an account?{" "}
