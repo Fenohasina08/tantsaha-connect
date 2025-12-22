@@ -1,0 +1,34 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Utilisateur {
+  id                String    @id @default(uuid())
+  telephone         String    @unique
+  prefixe           String
+  date_inscription  DateTime  @default(now())
+  derniere_connexion DateTime?
+  statut            String    @default("actif")
+  parcours          Parcours[]
+  
+  @@map("utilisateurs")
+}
+
+model Parcours {
+  id             String   @id @default(uuid())
+  utilisateur_id String
+  type_action    String
+  donnees        Json?    // Pour stocker des données flexibles (JSON)
+  date_action    DateTime @default(now())
+  localisation   String?  // Optionnel: "latitude,longitude"
+  
+  utilisateur    Utilisateur @relation(fields: [utilisateur_id], references: [id], onDelete: Cascade)
+  
+  @@index([utilisateur_id, date_action])
+  @@map("parcours")
+}
