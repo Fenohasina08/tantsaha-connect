@@ -1,0 +1,4 @@
+tantsaha@0.1.0 /home/herimamy/Desktop/tantsaha/tantsaha-frontend
+├── react-dom@19.2.3
+└── react@19.2.3
+
