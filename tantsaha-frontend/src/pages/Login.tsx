@@ -1,5 +1,6 @@
- import { useEffect, useRef } from "react";
+ import { useEffect, useRef,useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { loginUser } from "../services/authService";
 
 type ShootingStar = {
   x: number;
@@ -14,7 +15,7 @@ type ShootingStar = {
 const Login = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const navigate = useNavigate();
-
+  const [telephone, setTelephone] = useState("");
   /* ===============================
      ⭐ ÉTOILES FILANTES (PARTOUT)
   =============================== */
@@ -103,9 +104,26 @@ const Login = () => {
   /* ===============================
      🔐 LOGIN
   =============================== */
-  const handleLogin = () => {
-    navigate("/app");
-  };
+ const handleLogin = async () => {
+  if (!telephone) return alert("Entrez un numéro");
+
+  try {
+    const response = await loginUser(telephone);
+
+    // 💡 Attention ici : ton backend renvoie le token dans 'response.data.token'
+    if (response.success && response.data.token) {
+      localStorage.setItem("token", response.data.token);
+      
+      // Optionnel : tu peux aussi stocker les infos de l'utilisateur
+      localStorage.setItem("user", JSON.stringify(response.data.utilisateur));
+
+      navigate("/app");
+    }
+  } catch (error) {
+    console.error("Erreur détaillée :", error);
+    alert("Problème de connexion. Vérifiez votre numéro (10 chiffres).");
+  }
+};
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-[#0f2027] via-[#203a43] to-[#2c5364]">
@@ -132,9 +150,11 @@ const Login = () => {
               Phone number
             </label>
             <input
-              type="tel"
-              placeholder="+261 34 12 345 67"
-              className="w-full py-2 text-gray-700 bg-transparent border-b border-gray-300 outline-none focus:border-teal-500"
+            type="tel"
+            value={telephone} // L'input affiche la valeur de notre variable
+            onChange={(e) => setTelephone(e.target.value)} // On met à jour la variable à chaque touche pressée
+            placeholder="034 12 345 67"
+            className="w-full py-2 text-gray-700 bg-transparent border-b border-gray-300 outline-none focus:border-teal-500"
             />
           </div>
 
