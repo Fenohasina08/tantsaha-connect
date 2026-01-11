@@ -1,6 +1,6 @@
  import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useWeather } from '../hooks/useWeather';
-
+import RainEffect from '../hooks/RainEffect'; 
 import { 
   FaCalendarAlt,
   FaMapMarkerAlt,
@@ -37,7 +37,6 @@ interface ForecastDay {
   astro?: { sunrise: string; sunset: string };
 }
 
-// Type pour les onglets
 type TabType = 'today' | 'week' | 'maps';
 
 const MALAGASY_CITIES = [
@@ -48,14 +47,12 @@ const MALAGASY_CITIES = [
   { name: 'Fianarantsoa', region: 'Haute Matsiatra' }
 ];
 
-// CORRECTION ICI : Ajouter l'annotation de type pour TAB_CONFIG
 const TAB_CONFIG: { id: TabType; label: string; icon: any }[] = [
   { id: 'today', label: 'Androany', icon: FaSun },
   { id: 'week', label: 'Herinandro', icon: FaCalendarAlt },
   { id: 'maps', label: 'Sarintany', icon: FaMapMarkerAlt }
 ];
 
-// Composant WeatherPage
 const WeatherPage: React.FC = () => {
   const [selectedCity, setSelectedCity] = useState<string>('Antananarivo');
   const [activeTab, setActiveTab] = useState<TabType>('today');
@@ -125,7 +122,7 @@ const WeatherPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="sticky top-0 z-10 p-4 bg-white border-b">
+      <div className="sticky top-0 z-20 p-4 bg-white border-b">
         <div className="container mx-auto">
           <div className="flex flex-col justify-between md:flex-row md:items-center">
             <div className="mb-4 md:mb-0">
@@ -158,8 +155,8 @@ const WeatherPage: React.FC = () => {
                     {filteredCities.map(city => (
                       <button
                         key={city.name}
-                        onClick={() => setSelectedCity(city.name)}
-                        className="w-full px-4 py-2 text-left hover:bg-gray-50"
+                        onClick={() => { setSelectedCity(city.name); setSearchQuery(''); }}
+                        className="w-full px-4 py-2 text-left border-b hover:bg-gray-50 last:border-0"
                       >
                         {city.name} ({city.region})
                       </button>
@@ -194,7 +191,6 @@ const WeatherPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Navigation tabs - CORRECTION ICI */}
           <div className="mt-6">
             <nav className="flex space-x-2">
               {TAB_CONFIG.map((tab) => {
@@ -215,12 +211,17 @@ const WeatherPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Main content */}
       <div className="container p-4 mx-auto md:p-6">
         {currentWeather && dailyForecast?.[0] && (
           <div className="mb-8">
-            <div className="overflow-hidden shadow-lg bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl">
-              <div className="p-6 text-white md:p-8">
+            {/* AJOUT : relative et overflow-hidden ici */}
+            <div className="relative overflow-hidden shadow-lg bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl">
+              
+              {/* AJOUT : L'effet de pluie animé */}
+              {currentWeather.precip_mm > 0 && <RainEffect />}
+
+              {/* AJOUT : relative et z-10 pour passer au-dessus de la pluie */}
+              <div className="relative z-10 p-6 text-white md:p-8">
                 <div className="flex flex-col items-center justify-between lg:flex-row">
                   <div className="mb-6 text-center lg:text-left lg:mb-0">
                     <div className="flex flex-col items-center mb-4 lg:flex-row lg:justify-start">
@@ -242,7 +243,7 @@ const WeatherPage: React.FC = () => {
                     </p>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4 p-4 md:grid-cols-3 bg-white/20 rounded-xl">
+                  <div className="grid grid-cols-2 gap-4 p-4 md:grid-cols-4 bg-white/20 backdrop-blur-sm rounded-xl">
                     <div className="p-3 text-center">
                       <div className="text-sm">Hamandoana</div>
                       <div className="text-xl font-bold">{currentWeather.humidity}%</div>
@@ -266,7 +267,6 @@ const WeatherPage: React.FC = () => {
           </div>
         )}
 
-        {/* Tab content */}
         <div className="mt-8">
           {activeTab === 'today' && dailyForecast?.[0] && (
             <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
@@ -402,7 +402,7 @@ const WeatherPage: React.FC = () => {
           )}
         </div>
 
-        {/* Conseils agricoles */}
+        {/* Conseils agricoles (Rétabli complètement) */}
         {currentWeather && (
           <div className="p-6 mt-12 border border-green-200 bg-green-50 rounded-2xl">
             <h3 className="flex items-center mb-6 text-xl font-bold">
