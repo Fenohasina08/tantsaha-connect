@@ -1,7 +1,7 @@
  import React, { Suspense, lazy } from "react";
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-
+import 'leaflet/dist/leaflet.css';
 // 1. Imports des pages
 import Login from "./pages/Login";
 import Header from "./components/layout/Header";
