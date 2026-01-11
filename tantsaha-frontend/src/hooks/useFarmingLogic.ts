@@ -1,3 +1,4 @@
+import { title } from 'process';
 import { useMemo } from 'react';
 
 interface CurrentWeather {
@@ -27,7 +28,27 @@ export const useFarmingLogic = (currentWeather: CurrentWeather | null) => {
         severity: 'high'
       });
     }
-
+    if(currentWeather.precip_mm > 10)
+    {
+        alertsList.push({
+            type: 'rain',
+            title: 'Rotsak\'orana be miandry',
+            message: 'Ho mafy ny rotsakorana',
+            icon: '🌧️',
+            severity: 'medium'
+                        })
+    }
+    
+    if (currentWeather.wind_kph >= 20) {
+      // Au lieu de retourner du HTML, on "pousse" un objet dans notre liste
+      alertsList.push({
+        type: 'wind',
+        title: 'Rivotra mahery',
+        message: ' Mitandrema fa ho mafy ny tsiodrivotra.',
+        icon: '💨',
+        severity: 'high'
+      });
+    }
     return alertsList;
   }, [currentWeather]);
   return alerts;
