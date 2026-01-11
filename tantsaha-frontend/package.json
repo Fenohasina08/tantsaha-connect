@@ -15,6 +15,7 @@
     "@types/react-dom": "^19.2.3",
     "axios": "^1.13.2",
     "date-fns": "^4.1.0",
+    "framer-motion": "^12.25.0",
     "howler": "^2.2.4",
     "localforage": "^1.10.0",
     "lucide-react": "^0.562.0",
