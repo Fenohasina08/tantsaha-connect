@@ -2,10 +2,25 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 
 // 1. Les données des villes (on peut les mettre ici pour l'instant)
-const MADAGASCAR_CITIES = [
-  { name: "Antananarivo", coords: [-18.8792, 47.5079], temp: 22 },
-  { name: "Toamasina", coords: [-18.1492, 49.4023], temp: 26 },
-  { name: "Mahajanga", coords: [-15.7167, 46.3167], temp: 31 },
+ const MADAGASCAR_CITIES = [
+  { 
+    name: "Antananarivo", 
+    coordinates: [-18.8792, 47.5079], 
+    temp: 22, 
+    region: "Analamanga" 
+  },
+  { 
+    name: "Toamasina", 
+    coordinates: [-18.1492, 49.4023], 
+    temp: 26, 
+    region: "Atsinanana" 
+  },
+  { 
+    name: "Mahajanga", 
+    coordinates: [-15.7167, 46.3167], 
+    temp: 31, 
+    region: "Boeny" 
+  }
 ];
 
 export default function WeatherMap() {
