@@ -13,6 +13,8 @@ import {
   FaSync,
   FaExclamationTriangle
 } from 'react-icons/fa';
+import WeatherMap from '@/components/layout/weather/WeatherMap';
+
 
 // Types
 interface CurrentWeather {
@@ -39,12 +41,12 @@ interface ForecastDay {
 
 type TabType = 'today' | 'week' | 'maps';
 
-const MALAGASY_CITIES = [
-  { name: 'Antananarivo', region: 'Analamanga' },
-  { name: 'Toamasina', region: 'Atsinanana' },
-  { name: 'Antsirabe', region: 'Vakinankaratra' },
-  { name: 'Mahajanga', region: 'Boeny' },
-  { name: 'Fianarantsoa', region: 'Haute Matsiatra' }
+ const MALAGASY_CITIES = [
+  { name: 'Antananarivo', region: 'Analamanga', coordinates: [-18.8792, 47.5079] as [number, number] },
+  { name: 'Toamasina', region: 'Atsinanana', coordinates: [-18.1492, 49.4023] as [number, number] },
+  { name: 'Antsirabe', region: 'Vakinankaratra', coordinates: [-19.8659, 47.0333] as [number, number] },
+  { name: 'Mahajanga', region: 'Boeny', coordinates: [-15.7167, 46.3167] as [number, number] },
+  { name: 'Fianarantsoa', region: 'Haute Matsiatra', coordinates: [-21.4536, 47.0858] as [number, number] }
 ];
 
 const TAB_CONFIG: { id: TabType; label: string; icon: any }[] = [
@@ -61,7 +63,8 @@ const WeatherPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   
   const { currentWeather, dailyForecast, loading, error, location, refresh } = useWeather(selectedCity, 3);
-
+  const [activeCoords, setActiveCoords] = useState<[number, number] | null>(null);
+  
   const handleRefresh = useCallback(async () => {
     if (isRefreshing) return;
     setIsRefreshing(true);
@@ -155,8 +158,20 @@ const WeatherPage: React.FC = () => {
                     {filteredCities.map(city => (
                       <button
                         key={city.name}
-                        onClick={() => { setSelectedCity(city.name); setSearchQuery(''); }}
-                        className="w-full px-4 py-2 text-left border-b hover:bg-gray-50 last:border-0"
+                        onClick={() => { 
+                          setSelectedCity(city.name); 
+    
+                          // On cherche dans MALAGASY_CITIES (puisqu'on vient de la mettre à jour)
+                          // On précise que "c" est un élément de la liste
+                          const cityWithCoords = MALAGASY_CITIES.find((c) => c.name === city.name);
+    
+                          if (cityWithCoords) {
+                            setActiveCoords(cityWithCoords.coordinates);
+                          }
+    
+                          setSearchQuery(''); 
+                        }}
+                        className="..."
                       >
                         {city.name} ({city.region})
                       </button>
