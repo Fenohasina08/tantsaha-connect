@@ -45,25 +45,25 @@ export default function Header() {
       description: 'Pejy fandraisana'
     },
     { 
-      to: '/weather', 
+      to: '/app/weather', 
       icon: <FaCloudSun className="text-xl" />, 
       label: 'Toetrandro',
       description: 'Toetrandro ankehitriny sy vinavinaina'
     },
     { 
-      to: '/alerts', 
+      to: '/app/alerts', 
       icon: <FaBell className="text-xl" />, 
       label: 'Fampandrenesana',
       description: 'Fampandrenesana momba ny toetrandro'
     },
     { 
-      to: '/journal', 
+      to: '/app/journal', 
       icon: <FaBook className="text-xl" />, 
       label: 'Boky',
       description: 'Boky fitehirizana ny asa fambolena'
     },
     { 
-      to: '/advice', 
+      to: '/app/advice', 
       icon: <FaSeedling className="text-xl" />, 
       label: 'Torolalana',
       description: 'Torolalana momba ny fambolena'
