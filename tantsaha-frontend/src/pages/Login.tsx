@@ -157,24 +157,14 @@ const Login = () => {
             className="w-full py-2 text-gray-700 bg-transparent border-b border-gray-300 outline-none focus:border-teal-500"
             />
           </div>
-
-          
-
-        
-
+ 
           <button
             onClick={handleLogin}
             className="w-full py-3 mt-8 font-semibold text-white transition rounded-md shadow-lg bg-gradient-to-r from-teal-500 to-teal-600 hover:to-teal-700"
           >
             LOG IN
           </button>
-
-          <div className="mt-3 text-sm text-center text-gray-600">
-            Don’t have an account?{" "}
-            <a href="#" className="font-medium text-teal-600">
-              Sign up
-            </a>
-          </div>
+ 
         </div>
       </div>
     </div>
